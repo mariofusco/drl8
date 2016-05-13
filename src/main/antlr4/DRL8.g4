@@ -2,12 +2,7 @@ grammar DRL8;
 
 import Java8;
 
-literal
-	:	IntegerLiteral
-	|	FloatingPointLiteral
-	|	BooleanLiteral
-	|	CharacterLiteral
-	|	StringLiteral
-	|	NullLiteral
-	|   '$'
-	;
+@header {
+    package org.drools.drl8.antlr4;
+}
+

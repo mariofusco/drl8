@@ -52,6 +52,7 @@
         <configuration>
           <visitor>true</visitor>
           <listener>true</listener>
+          <outputDirectory>${basedir}/src/main/java/org/drools/drl8/antlr4</outputDirectory>
         </configuration>
         <executions>
           <execution>
@@ -70,6 +71,7 @@
           <showTree>true</showTree>
           <entryPoint>compilationUnit</entryPoint>
           <grammarName>DRL8</grammarName>
+          <packageName>org.drools.drl8.antlr4</packageName>
         </configuration>
         <executions>
           <execution>

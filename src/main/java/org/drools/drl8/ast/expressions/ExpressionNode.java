@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.expressions;
 
-public interface Node {
-    void setParent( Node parent );
+import org.drools.drl8.ast.AbstractNode;
+
+public class ExpressionNode extends AbstractNode {
 }

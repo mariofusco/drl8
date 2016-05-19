@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.expressions;
 
-public interface Node {
-    void setParent( Node parent );
+public class LiteralNode<T> extends ExpressionNode {
+    private final T literal;
+
+    public LiteralNode( T literal ) {
+        this.literal = literal;
+    }
+
+    @Override
+    public String toString() {
+        return literal.toString();
+    }
 }

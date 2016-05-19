@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.statements;
 
-public interface Node {
-    void setParent( Node parent );
+import org.drools.drl8.ast.AbstractNode;
+import org.drools.drl8.ast.expressions.ExpressionNode;
+
+public class VariableDeclarationNode extends AbstractNode {
+    public String id;
+    public ExpressionNode expression;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append( id );
+        if (expression != null) {
+            sb.append( " = " ).append( expression );
+        }
+        return sb.toString();
+    }
 }

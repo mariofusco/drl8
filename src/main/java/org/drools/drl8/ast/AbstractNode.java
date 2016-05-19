@@ -23,9 +23,13 @@ import static java.util.stream.Collectors.joining;
 public abstract class AbstractNode implements Node {
     public Node parent;
 
-    protected void appendList( StringBuilder sb, List<?> list ) {
+    protected void appendList( StringBuilder sb, List<?> list, String separator ) {
         if (list != null) {
-            sb.append( list.stream().map( Object::toString ).collect( joining( "\n" ) ) );
+            sb.append( list.stream().map( Object::toString ).collect( joining( separator ) ) );
         }
+    }
+
+    public void setParent( Node parent ) {
+        this.parent = parent;
     }
 }

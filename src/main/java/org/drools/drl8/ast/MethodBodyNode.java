@@ -16,6 +16,21 @@
 
 package org.drools.drl8.ast;
 
-public interface Node {
-    void setParent( Node parent );
+import org.drools.drl8.ast.statements.StatementNode;
+
+import java.util.List;
+
+public class MethodBodyNode extends AbstractNode {
+    public List<StatementNode> statements;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (statements != null) {
+            for ( StatementNode statement : statements ) {
+                sb.append( statement ).append( "\n" );
+            }
+        }
+        return sb.toString();
+    }
 }

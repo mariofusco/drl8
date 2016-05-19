@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.expressions;
 
-public interface Node {
-    void setParent( Node parent );
+public class BooleanLiteralNode extends LiteralNode<Boolean> {
+    public BooleanLiteralNode( Boolean literal ) {
+        super( literal );
+    }
+    public BooleanLiteralNode( String literal ) {
+        this( Boolean.parseBoolean( literal ) );
+    }
 }

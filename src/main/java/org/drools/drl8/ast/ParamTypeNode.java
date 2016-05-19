@@ -16,6 +16,18 @@
 
 package org.drools.drl8.ast;
 
-public interface Node {
-    void setParent( Node parent );
+public class ParamTypeNode extends AbstractNode {
+    public int arrayDim = 0;
+    public String rawType;
+    public boolean isPrimitive;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append( rawType );
+        for (int i = 0; i < arrayDim; i++) {
+            sb.append( "[]" );
+        }
+        return sb.toString();
+    }
 }

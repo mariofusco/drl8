@@ -16,5 +16,27 @@
 
 package org.drools.drl8.ast;
 
+import java.util.List;
+
 public class MethodNode extends MemberNode {
+    public ParamTypeNode result;
+    public List<ParamNode> params;
+    public MethodBodyNode body;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for ( String modifier : modifiers ) {
+            sb.append( modifier ).append( " " );
+        }
+        sb.append( name ).append( " " );
+        sb.append( result ).append( " " );
+        sb.append( "(" );
+        appendList( sb, params, "," );
+        sb.append( ") {\n" );
+        sb.append( body );
+        sb.append( "}\n" );
+        return sb.toString();
+    }
+
 }

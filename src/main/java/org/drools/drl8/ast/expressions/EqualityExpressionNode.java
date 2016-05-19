@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.expressions;
 
-public interface Node {
-    void setParent( Node parent );
+public class EqualityExpressionNode extends ExpressionNode {
+    public ExpressionNode left;
+    public ExpressionNode right;
+    public boolean negated;
+
+    @Override
+    public String toString() {
+        return left + (negated ? " != " : " == ") + right;
+    }
 }

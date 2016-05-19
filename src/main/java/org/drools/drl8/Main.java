@@ -36,10 +36,10 @@ public class Main {
         DRL8Lexer lexer = new DRL8Lexer( antlrFileStream );
         final CommonTokenStream tokens = new CommonTokenStream( lexer );
 
-        DRL8Parser parser = new DRL8Parser( tokens);
+        DRL8Parser parser = new DRL8Parser( tokens );
         parser.setErrorHandler(new BailErrorStrategy() );
 
-        SourceGenerator sourceGenerator = new SourceGenerator();
+        ASTGenerator sourceGenerator = new ASTGenerator();
         parser.addParseListener( sourceGenerator );
         ParserRuleContext parserRuleContext = parser.compilationUnit();
 

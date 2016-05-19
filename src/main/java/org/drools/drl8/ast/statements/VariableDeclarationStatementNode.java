@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.statements;
+
+import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.ast.TypedNode;
 
 import java.util.List;
 
-public class SourceNode implements Node {
-    public String pkg;
-    public List<String> imports;
-    public TypeNode type;
+public class VariableDeclarationStatementNode extends StatementNode implements TypedNode {
+    public ParamTypeNode type;
+    public List<VariableDeclarationNode> declarations;
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (pkg != null) {
-            sb.append( "package " ).append( pkg ).append( ";\n\n" );
-        }
-        if (imports != null) {
-            for ( String imp : imports ) {
-                sb.append( "import " ).append( imp ).append( ";\n" );
-            }
-            sb.append( "\n" );
-        }
-        sb.append( type );
+        sb.append( type ).append( " " );
+        appendList( sb, declarations, ", " );
+        sb.append( ";" );
         return sb.toString();
     }
 
     @Override
-    public void setParent( Node parent ) {
-        throw new UnsupportedOperationException();
+    public void setType( ParamTypeNode type ) {
+        this.type = type;
     }
 }

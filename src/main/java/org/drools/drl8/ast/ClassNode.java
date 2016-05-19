@@ -42,9 +42,9 @@ public class ClassNode extends TypeNode {
               .append( interfaces.stream().collect( joining(", ")) ).append( " " );
         }
         sb.append( "{\n\n" );
-        appendList( sb, fields );
-        appendList( sb, methods );
-        appendList( sb, innerTypes );
+        appendList( sb, fields, "\n" );
+        appendList( sb, methods, "\n" );
+        appendList( sb, innerTypes, "\n" );
         sb.append( "}" );
         return sb.toString();
     }

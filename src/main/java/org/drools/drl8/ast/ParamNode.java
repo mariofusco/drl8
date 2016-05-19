@@ -16,6 +16,16 @@
 
 package org.drools.drl8.ast;
 
-public interface Node {
-    void setParent( Node parent );
+public class ParamNode extends AbstractNode implements TypedNode {
+    public ParamTypeNode type;
+    public String name;
+
+    @Override
+    public String toString() {
+        return type + " " + name;
+    }
+
+    public void setType( ParamTypeNode type ) {
+        this.type = type;
+    }
 }

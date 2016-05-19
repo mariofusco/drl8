@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.expressions;
 
-public interface Node {
-    void setParent( Node parent );
+public class VariableNameNode extends ExpressionNode {
+    public String id;
+
+    public VariableNameNode(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

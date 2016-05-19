@@ -16,6 +16,6 @@
 
 package org.drools.drl8.ast;
 
-public interface Node {
-    void setParent( Node parent );
+public interface TypedNode extends Node {
+    void setType( ParamTypeNode type );
 }

@@ -30,9 +30,8 @@ public class MethodNode extends MemberNode {
         for ( String modifier : modifiers ) {
             sb.append( modifier ).append( " " );
         }
-        sb.append( name ).append( " " );
         result.generateCode( ctx, sb );
-        sb.append( " " );
+        sb.append( " " ).append( name );
         sb.append( "(" );
         appendList( ctx, sb, params, "," );
         sb.append( ") {\n" );

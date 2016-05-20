@@ -63,6 +63,11 @@ public class ASTGenerator extends DRL8BaseListener {
     }
 
     @Override
+    public void exitPackageDeclaration( DRL8Parser.PackageDeclarationContext ctx ) {
+        source.pkg = parseTreeToString(ctx, 1, ctx.getChildCount()-1);
+    }
+
+    @Override
     public void enterNormalClassDeclaration( DRL8Parser.NormalClassDeclarationContext ctx ) {
         ClassNode classNode = new ClassNode();
         Node parent = stack.peek();

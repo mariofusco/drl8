@@ -43,4 +43,8 @@ public class SourceNode extends AbstractNode {
     public void setParent( Node parent ) {
         throw new UnsupportedOperationException();
     }
+
+    public String getFullyQualifiedName() {
+        return (pkg != null ? pkg + "." : "") + type.name;
+    }
 }

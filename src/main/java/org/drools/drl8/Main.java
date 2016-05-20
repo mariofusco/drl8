@@ -22,9 +22,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.drools.drl8.antlr4.DRL8Lexer;
 import org.drools.drl8.antlr4.DRL8Parser;
+import org.drools.drl8.ast.SourceNode;
+import org.drools.drl8.compiler.NativeJavaCompiler;
 import org.drools.drl8.util.CodeGenerationContext;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 public class Main {
 
@@ -45,10 +48,17 @@ public class Main {
         ParserRuleContext parserRuleContext = parser.compilationUnit();
 
         CodeGenerationContext ctx = new CodeGenerationContext();
+        SourceNode sourceNode = sourceGenerator.getSource();
         String code = ctx
                 .setEqualityMode( true )
-                .generateCode( sourceGenerator.getSource() );
+                .generateCode( sourceNode );
         System.out.println( code );
+        System.out.println( );
+
+        NativeJavaCompiler compiler = new NativeJavaCompiler( Main.class.getClassLoader() );
+        Class<?> clazz = compiler.compile( sourceNode.getFullyQualifiedName(), code );
+        Method m = clazz.getMethod( "main", String.class );
+        m.invoke( null, "test" );
     }
 
 }

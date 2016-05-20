@@ -20,19 +20,26 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ASTUtil {
-    public static String parseTreeToString(ParseTree tree ) {
+
+    public static String parseTreeToString( ParseTree tree ) {
         StringBuilder sb = new StringBuilder();
-        concatParseTree(tree, sb);
+        concatParseTree(tree, sb, 0, tree.getChildCount());
         return sb.toString();
     }
 
-    private static void concatParseTree(ParseTree tree, StringBuilder sb) {
-        for (int i = 0; i < tree.getChildCount(); i++) {
+    public static String parseTreeToString( ParseTree tree, int start, int end ) {
+        StringBuilder sb = new StringBuilder();
+        concatParseTree(tree, sb, start, end);
+        return sb.toString();
+    }
+
+    private static void concatParseTree( ParseTree tree, StringBuilder sb, int start, int end ) {
+        for (int i = start; i < end; i++) {
             ParseTree child = tree.getChild( i );
             if (child instanceof TerminalNode ) {
                 sb.append( child );
             } else {
-                concatParseTree( child, sb );
+                concatParseTree( child, sb, 0, child.getChildCount() );
             }
         }
     }

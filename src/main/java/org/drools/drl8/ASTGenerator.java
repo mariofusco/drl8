@@ -32,6 +32,7 @@ import org.drools.drl8.ast.TypedNode;
 import org.drools.drl8.ast.expressions.BooleanLiteralNode;
 import org.drools.drl8.ast.expressions.EqualityExpressionNode;
 import org.drools.drl8.ast.expressions.ExpressionNode;
+import org.drools.drl8.ast.expressions.IntegerLiteralNode;
 import org.drools.drl8.ast.expressions.LiteralNode;
 import org.drools.drl8.ast.expressions.MethodInvocationExpressionNode;
 import org.drools.drl8.ast.expressions.StringLiteralNode;
@@ -356,6 +357,8 @@ public class ASTGenerator extends DRL8BaseListener {
             literal = new StringLiteralNode( ctx.StringLiteral().toString() );
         } else if (ctx.BooleanLiteral() != null) {
             literal = new BooleanLiteralNode( ctx.BooleanLiteral().toString() );
+        } else if (ctx.IntegerLiteral() != null) {
+            literal = new IntegerLiteralNode( ctx.IntegerLiteral().toString() );
         }
         setAtomicExpressionOnParentNode( stack.peek(), literal );
     }

@@ -18,15 +18,15 @@ package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.ParamTypeNode;
 
-public class IntegerLiterNode extends LiteralNode<Long> {
+public class IntegerLiteralNode extends LiteralNode<Long> {
 
     private static final ParamTypeNode TYPE = new ParamTypeNode( "long", true );
 
-    public IntegerLiterNode( Long literal ) {
+    public IntegerLiteralNode( Long literal ) {
         super( literal );
     }
 
-    public IntegerLiterNode( String literal ) {
+    public IntegerLiteralNode( String literal ) {
         this( Long.parseLong( literal ) );
     }
 

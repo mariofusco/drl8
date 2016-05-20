@@ -16,13 +16,29 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.util.CodeGenerationContext;
+
 public class EqualityExpressionNode extends ExpressionNode {
     public ExpressionNode left;
     public ExpressionNode right;
     public boolean negated;
 
     @Override
-    public String toString() {
-        return left + (negated ? " != " : " == ") + right;
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+        left.generateCode( ctx, sb );
+        if (ctx.isEqualityMode() && !left.getType().isPrimitive) {
+            sb.append( ".equals(" );
+            right.generateCode( ctx, sb );
+            sb.append( ")" );
+        } else {
+            sb.append( negated ? " != " : " == " );
+            right.generateCode( ctx, sb );
+        }
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return left.getType();
     }
 }

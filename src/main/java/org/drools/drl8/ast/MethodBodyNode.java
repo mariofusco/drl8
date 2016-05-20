@@ -17,6 +17,7 @@
 package org.drools.drl8.ast;
 
 import org.drools.drl8.ast.statements.StatementNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 import java.util.List;
 
@@ -24,13 +25,12 @@ public class MethodBodyNode extends AbstractNode {
     public List<StatementNode> statements;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         if (statements != null) {
             for ( StatementNode statement : statements ) {
-                sb.append( statement ).append( "\n" );
+                statement.generateCode( ctx, sb );
+                sb.append( "\n" );
             }
         }
-        return sb.toString();
     }
 }

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast.expressions;
+package org.drools.drl8.ast.statements;
 
+import org.drools.drl8.ast.expressions.ExpressionNode;
 import org.drools.drl8.util.CodeGenerationContext;
 
-public abstract class LiteralNode<T> extends ExpressionNode {
-    private final T literal;
-
-    public LiteralNode( T literal ) {
-        this.literal = literal;
-    }
+public class ExpressionStatementNode extends StatementNode {
+    public ExpressionNode expression;
 
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-        sb.append( literal );
+        expression.generateCode( ctx, sb );
+        sb.append( ";" );
     }
 }

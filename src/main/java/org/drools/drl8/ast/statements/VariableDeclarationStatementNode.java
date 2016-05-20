@@ -18,6 +18,7 @@ package org.drools.drl8.ast.statements;
 
 import org.drools.drl8.ast.ParamTypeNode;
 import org.drools.drl8.ast.TypedNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 import java.util.List;
 
@@ -26,12 +27,11 @@ public class VariableDeclarationStatementNode extends StatementNode implements T
     public List<VariableDeclarationNode> declarations;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append( type ).append( " " );
-        appendList( sb, declarations, ", " );
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+        type.generateCode( ctx, sb );
+        sb.append( " " );
+        appendList( ctx, sb, declarations, ", " );
         sb.append( ";" );
-        return sb.toString();
     }
 
     @Override

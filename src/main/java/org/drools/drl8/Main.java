@@ -22,6 +22,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.drools.drl8.antlr4.DRL8Lexer;
 import org.drools.drl8.antlr4.DRL8Parser;
+import org.drools.drl8.util.CodeGenerationContext;
 
 import java.io.File;
 
@@ -43,7 +44,11 @@ public class Main {
         parser.addParseListener( sourceGenerator );
         ParserRuleContext parserRuleContext = parser.compilationUnit();
 
-        System.out.println( sourceGenerator.getSource() );
+        CodeGenerationContext ctx = new CodeGenerationContext();
+        String code = ctx
+                .setEqualityMode( true )
+                .generateCode( sourceGenerator.getSource() );
+        System.out.println( code );
     }
 
 }

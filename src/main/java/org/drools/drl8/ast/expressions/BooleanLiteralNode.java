@@ -16,11 +16,22 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ParamTypeNode;
+
 public class BooleanLiteralNode extends LiteralNode<Boolean> {
+
+    private static final ParamTypeNode TYPE = new ParamTypeNode( "boolean", true );
+
     public BooleanLiteralNode( Boolean literal ) {
         super( literal );
     }
+
     public BooleanLiteralNode( String literal ) {
         this( Boolean.parseBoolean( literal ) );
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return TYPE;
     }
 }

@@ -16,18 +16,32 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 public class ParamTypeNode extends AbstractNode {
+
+    public static final ParamTypeNode UNKNOWN_TYPE = new ParamTypeNode( "UNKNOWN" );
+
     public int arrayDim = 0;
     public String rawType;
     public boolean isPrimitive;
 
+    public ParamTypeNode() { }
+
+    public ParamTypeNode(String rawType) {
+        this(rawType, false);
+    }
+
+    public ParamTypeNode(String rawType, boolean isPrimitive) {
+        this.rawType = rawType;
+        this.isPrimitive = isPrimitive;
+    }
+
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         sb.append( rawType );
         for (int i = 0; i < arrayDim; i++) {
             sb.append( "[]" );
         }
-        return sb.toString();
     }
 }

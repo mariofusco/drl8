@@ -16,5 +16,22 @@
 
 package org.drools.drl8.ast.expressions;
 
-public class IntegerLiterNode extends ExpressionNode {
+import org.drools.drl8.ast.ParamTypeNode;
+
+public class IntegerLiterNode extends LiteralNode<Long> {
+
+    private static final ParamTypeNode TYPE = new ParamTypeNode( "long", true );
+
+    public IntegerLiterNode( Long literal ) {
+        super( literal );
+    }
+
+    public IntegerLiterNode( String literal ) {
+        this( Long.parseLong( literal ) );
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return TYPE;
+    }
 }

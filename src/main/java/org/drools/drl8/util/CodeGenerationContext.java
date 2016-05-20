@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast.expressions;
+package org.drools.drl8.util;
 
-import org.drools.drl8.util.CodeGenerationContext;
+import org.drools.drl8.ast.Node;
 
-public abstract class LiteralNode<T> extends ExpressionNode {
-    private final T literal;
+public class CodeGenerationContext {
 
-    public LiteralNode( T literal ) {
-        this.literal = literal;
+    private boolean equalityMode = false;
+
+    public String generateCode(Node node ) {
+        StringBuilder sb = new StringBuilder();
+        node.generateCode( this, sb );
+        return sb.toString();
     }
 
-    @Override
-    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-        sb.append( literal );
+    public boolean isEqualityMode() {
+        return equalityMode;
+    }
+
+    public CodeGenerationContext setEqualityMode( boolean equalityMode ) {
+        this.equalityMode = equalityMode;
+        return this;
     }
 }

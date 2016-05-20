@@ -16,20 +16,32 @@
 
 package org.drools.drl8.ast;
 
-import java.util.List;
+import org.drools.drl8.util.CodeGenerationContext;
 
-import static java.util.stream.Collectors.joining;
+import java.util.List;
 
 public abstract class AbstractNode implements Node {
     public Node parent;
 
-    protected void appendList( StringBuilder sb, List<?> list, String separator ) {
+    protected void appendList( CodeGenerationContext ctx, StringBuilder sb, List<? extends Node> list, String separator ) {
         if (list != null) {
-            sb.append( list.stream().map( Object::toString ).collect( joining( separator ) ) );
+            for (int i = 0; i < list.size(); i++) {
+                if (i > 0) {
+                    sb.append( separator );
+                }
+                list.get(i).generateCode( ctx, sb );
+            }
         }
     }
 
     public void setParent( Node parent ) {
         this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        generateCode( null, sb );
+        return sb.toString();
     }
 }

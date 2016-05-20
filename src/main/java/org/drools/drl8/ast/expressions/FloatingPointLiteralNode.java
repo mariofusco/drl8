@@ -16,5 +16,22 @@
 
 package org.drools.drl8.ast.expressions;
 
-public class FloatingPointLiteralNode extends ExpressionNode {
+import org.drools.drl8.ast.ParamTypeNode;
+
+public class FloatingPointLiteralNode extends LiteralNode<Double> {
+
+    private static final ParamTypeNode TYPE = new ParamTypeNode( "double", true );
+
+    public FloatingPointLiteralNode( Double literal ) {
+        super( literal );
+    }
+
+    public FloatingPointLiteralNode( String literal ) {
+        this( Double.parseDouble( literal ) );
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return TYPE;
+    }
 }

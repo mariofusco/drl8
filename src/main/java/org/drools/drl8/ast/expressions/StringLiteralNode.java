@@ -16,9 +16,18 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ParamTypeNode;
+
 public class StringLiteralNode extends LiteralNode<String> {
+
+    private static final ParamTypeNode TYPE = new ParamTypeNode( "String" );
 
     public StringLiteralNode( String literal ) {
         super(literal);
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return TYPE;
     }
 }

@@ -16,6 +16,10 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 public interface Node {
     void setParent( Node parent );
+
+    void generateCode( CodeGenerationContext ctx, StringBuilder sb );
 }

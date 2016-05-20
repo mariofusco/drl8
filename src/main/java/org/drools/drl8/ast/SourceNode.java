@@ -16,16 +16,17 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 import java.util.List;
 
-public class SourceNode implements Node {
+public class SourceNode extends AbstractNode {
     public String pkg;
     public List<String> imports;
     public TypeNode type;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         if (pkg != null) {
             sb.append( "package " ).append( pkg ).append( ";\n\n" );
         }
@@ -35,8 +36,7 @@ public class SourceNode implements Node {
             }
             sb.append( "\n" );
         }
-        sb.append( type );
-        return sb.toString();
+        type.generateCode( ctx, sb );
     }
 
     @Override

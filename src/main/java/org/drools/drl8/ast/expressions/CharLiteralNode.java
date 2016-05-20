@@ -16,5 +16,22 @@
 
 package org.drools.drl8.ast.expressions;
 
-public class CharLiteralNode extends ExpressionNode {
+import org.drools.drl8.ast.ParamTypeNode;
+
+public class CharLiteralNode extends LiteralNode<Character> {
+
+    private static final ParamTypeNode TYPE = new ParamTypeNode( "char", true );
+
+    public CharLiteralNode( Character literal ) {
+        super( literal );
+    }
+
+    public CharLiteralNode( String literal ) {
+        this( literal.charAt( 0 ) );
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return TYPE;
+    }
 }

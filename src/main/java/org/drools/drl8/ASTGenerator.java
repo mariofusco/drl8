@@ -16,6 +16,8 @@
 
 package org.drools.drl8;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.drools.drl8.antlr4.DRL8BaseListener;
 import org.drools.drl8.antlr4.DRL8Parser;
 import org.drools.drl8.ast.ClassNode;
@@ -31,21 +33,26 @@ import org.drools.drl8.ast.expressions.BooleanLiteralNode;
 import org.drools.drl8.ast.expressions.EqualityExpressionNode;
 import org.drools.drl8.ast.expressions.ExpressionNode;
 import org.drools.drl8.ast.expressions.LiteralNode;
+import org.drools.drl8.ast.expressions.MethodInvocationExpressionNode;
 import org.drools.drl8.ast.expressions.StringLiteralNode;
 import org.drools.drl8.ast.expressions.VariableNameNode;
+import org.drools.drl8.ast.statements.ExpressionStatementNode;
 import org.drools.drl8.ast.statements.StatementNode;
 import org.drools.drl8.ast.statements.VariableDeclarationNode;
 import org.drools.drl8.ast.statements.VariableDeclarationStatementNode;
+import org.drools.drl8.util.VariablesScope;
 
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
+import static org.drools.drl8.util.ASTUtil.parseTreeToString;
 
 public class ASTGenerator extends DRL8BaseListener {
-    private Stack<Node> stack = new Stack<>();
-    private SourceNode source = new SourceNode();
+    private final SourceNode source = new SourceNode();
+    private final Stack<Node> stack = new Stack<>();
+    private VariablesScope scope = new VariablesScope();
 
     public ASTGenerator() {
         stack.push( source );
@@ -80,6 +87,16 @@ public class ASTGenerator extends DRL8BaseListener {
                                  .map( Object::toString )
                                  .collect( toList() );
         classNode.name = ctx.Identifier().toString();
+    }
+
+    @Override
+    public void enterBlock( DRL8Parser.BlockContext ctx ) {
+        scope = scope.enterScope();
+    }
+
+    @Override
+    public void exitBlock( DRL8Parser.BlockContext ctx ) {
+        scope = scope.exitScope();
     }
 
     @Override
@@ -216,12 +233,50 @@ public class ASTGenerator extends DRL8BaseListener {
     }
 
     @Override
+    public void enterExpressionStatement( DRL8Parser.ExpressionStatementContext ctx ) {
+        ExpressionStatementNode expression = new ExpressionStatementNode();
+        expression.parent = stack.peek();
+        stack.push( expression );
+    }
+
+    @Override
     public void enterLocalVariableDeclaration( DRL8Parser.LocalVariableDeclarationContext ctx ) {
-        Node node = stack.peek();
-        if (node instanceof MethodBodyNode) {
-            VariableDeclarationStatementNode statementNode = new VariableDeclarationStatementNode();
-            statementNode.parent = node;
-            stack.push( statementNode );
+        VariableDeclarationStatementNode statementNode = new VariableDeclarationStatementNode();
+        statementNode.parent = stack.peek();
+        stack.push( statementNode );
+    }
+
+    @Override
+    public void enterMethodInvocation( DRL8Parser.MethodInvocationContext ctx ) {
+        ExpressionStatementNode expression = (ExpressionStatementNode) stack.peek();
+        MethodInvocationExpressionNode invocation = new MethodInvocationExpressionNode();
+        invocation.parent = expression;
+        expression.expression = invocation;
+        stack.push( invocation );
+    }
+
+    @Override
+    public void exitMethodInvocation( DRL8Parser.MethodInvocationContext ctx ) {
+        MethodInvocationExpressionNode invocation = (MethodInvocationExpressionNode) stack.pop();
+
+        StringBuilder sb = new StringBuilder();
+        for (ParseTree child : ctx.children) {
+            if (child.toString().equals( "(" )) {
+                break;
+            }
+            if (child instanceof TerminalNode) {
+                sb.append( child );
+            } else {
+                sb.append( parseTreeToString( child ) );
+            }
+        }
+        String invoked = sb.toString();
+        int dotPos = invoked.lastIndexOf( '.' );
+        if (dotPos > 0) {
+            invocation.invokedObject = invoked.substring( 0, dotPos );
+            invocation.methodName = invoked.substring( dotPos+1 );
+        } else {
+            invocation.methodName = invoked;
         }
     }
 
@@ -241,6 +296,7 @@ public class ASTGenerator extends DRL8BaseListener {
     public void exitVariableDeclarator( DRL8Parser.VariableDeclaratorContext ctx ) {
         VariableDeclarationNode declarationNode = (VariableDeclarationNode) stack.pop();
         declarationNode.id = ctx.variableDeclaratorId().Identifier().toString();
+        scope.define( declarationNode.id, ( (VariableDeclarationStatementNode) declarationNode.parent ).type );
     }
 
     @Override
@@ -261,15 +317,30 @@ public class ASTGenerator extends DRL8BaseListener {
             declarationNode.expression = expressionNode;
             expressionNode.parent = declarationNode;
         } else {
-            VariableDeclarationNode declarationNode = (VariableDeclarationNode) stack.peek();
-            declarationNode.expression = expressionNode.left;
-            expressionNode.left.parent = declarationNode;
+            Node node = stack.peek();
+            if (node instanceof VariableDeclarationNode) {
+                VariableDeclarationNode declarationNode = (VariableDeclarationNode) node;
+                declarationNode.expression = expressionNode.left;
+                expressionNode.left.parent = declarationNode;
+            } else if (node instanceof MethodInvocationExpressionNode) {
+                MethodInvocationExpressionNode invocationNode = (MethodInvocationExpressionNode) node;
+                if (invocationNode.arguments == null) {
+                    invocationNode.arguments = new ArrayList<>();
+                }
+                invocationNode.arguments.add(expressionNode.left);
+                expressionNode.left.parent = invocationNode;
+            } else {
+                throw new RuntimeException( "unknown type " + node.getClass() );
+            }
         }
     }
 
     @Override
     public void exitExpressionName( DRL8Parser.ExpressionNameContext ctx ) {
-        VariableNameNode variable = new VariableNameNode( ctx.Identifier().toString() );
+        String id = ctx.Identifier().toString();
+        VariableNameNode variable = new VariableNameNode();
+        variable.id = id;
+        variable.type = scope.lookup( id );
         setAtomicExpressionOnParentNode( stack.peek(), variable );
     }
 
@@ -297,5 +368,4 @@ public class ASTGenerator extends DRL8BaseListener {
             }
         }
     }
-
 }

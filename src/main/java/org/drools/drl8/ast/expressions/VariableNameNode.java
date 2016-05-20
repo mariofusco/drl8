@@ -16,15 +16,19 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.util.CodeGenerationContext;
+
 public class VariableNameNode extends ExpressionNode {
     public String id;
-
-    public VariableNameNode(String id) {
-        this.id = id;
-    }
+    public ParamTypeNode type;
 
     @Override
-    public String toString() {
-        return id;
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+        sb.append( id );
+    }
+
+    public ParamTypeNode getType() {
+        return type;
     }
 }

@@ -16,6 +16,8 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
@@ -28,8 +30,7 @@ public class ClassNode extends TypeNode {
     public List<MethodNode> methods;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         for ( String modifier : modifiers ) {
             sb.append( modifier ).append( " " );
         }
@@ -41,13 +42,10 @@ public class ClassNode extends TypeNode {
             sb.append( "implements " ).append( " " )
               .append( interfaces.stream().collect( joining(", ")) ).append( " " );
         }
-        sb.append( "{\n\n" );
-        appendList( sb, fields, "\n" );
-        appendList( sb, methods, "\n" );
-        appendList( sb, innerTypes, "\n" );
+        sb.append( "{\n" );
+        appendList( ctx, sb, fields, "\n" );
+        appendList( ctx, sb, methods, "\n" );
+        appendList( ctx, sb, innerTypes, "\n" );
         sb.append( "}" );
-        return sb.toString();
     }
-
-
 }

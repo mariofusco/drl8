@@ -18,18 +18,18 @@ package org.drools.drl8.ast.statements;
 
 import org.drools.drl8.ast.AbstractNode;
 import org.drools.drl8.ast.expressions.ExpressionNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 public class VariableDeclarationNode extends AbstractNode {
     public String id;
     public ExpressionNode expression;
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         sb.append( id );
         if (expression != null) {
-            sb.append( " = " ).append( expression );
+            sb.append( " = " );
+            expression.generateCode( ctx, sb );
         }
-        return sb.toString();
     }
 }

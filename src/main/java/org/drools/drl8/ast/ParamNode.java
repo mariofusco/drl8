@@ -16,13 +16,16 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 public class ParamNode extends AbstractNode implements TypedNode {
     public ParamTypeNode type;
     public String name;
 
     @Override
-    public String toString() {
-        return type + " " + name;
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+        type.generateCode( ctx, sb );
+        sb.append( " " ).append( name );
     }
 
     public void setType( ParamTypeNode type ) {

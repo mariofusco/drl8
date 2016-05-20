@@ -18,5 +18,5 @@ package org.drools.drl8.ast.statements;
 
 import org.drools.drl8.ast.AbstractNode;
 
-public class StatementNode extends AbstractNode {
+public abstract class StatementNode extends AbstractNode {
 }

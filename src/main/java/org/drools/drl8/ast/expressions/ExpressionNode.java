@@ -17,6 +17,8 @@
 package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.AbstractNode;
+import org.drools.drl8.ast.ParamTypeNode;
 
-public class ExpressionNode extends AbstractNode {
+public abstract class ExpressionNode extends AbstractNode {
+    public abstract ParamTypeNode getType();
 }

@@ -16,5 +16,12 @@
 
 package org.drools.drl8.ast;
 
+import org.drools.drl8.util.CodeGenerationContext;
+
 public class InterfaceNode extends TypeNode {
+
+    @Override
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+
+    }
 }

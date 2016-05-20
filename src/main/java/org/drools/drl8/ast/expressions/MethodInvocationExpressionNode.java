@@ -16,17 +16,29 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ParamTypeNode;
 import org.drools.drl8.util.CodeGenerationContext;
 
-public abstract class LiteralNode<T> extends ExpressionNode {
-    private final T literal;
+import java.util.List;
 
-    public LiteralNode( T literal ) {
-        this.literal = literal;
-    }
+public class MethodInvocationExpressionNode extends ExpressionNode {
+    public String invokedObject;
+    public String methodName;
+    public List<ExpressionNode> arguments;
 
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-        sb.append( literal );
+        if (invokedObject != null) {
+            sb.append( invokedObject ).append( "." );
+        }
+        sb.append( methodName );
+        sb.append( "(" );
+        appendList( ctx, sb, arguments, ", " );
+        sb.append( ")" );
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return ParamTypeNode.UNKNOWN_TYPE;
     }
 }

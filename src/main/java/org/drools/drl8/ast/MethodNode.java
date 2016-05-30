@@ -21,6 +21,7 @@ import org.drools.drl8.util.CodeGenerationContext;
 import java.util.List;
 
 public class MethodNode extends MemberNode {
+    public String name;
     public ParamTypeNode result;
     public List<ParamNode> params;
     public MethodBodyNode body;

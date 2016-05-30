@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.drools.drl8.antlr4.DRL8BaseListener;
 import org.drools.drl8.antlr4.DRL8Parser;
 import org.drools.drl8.ast.ClassNode;
+import org.drools.drl8.ast.FieldNode;
 import org.drools.drl8.ast.MethodBodyNode;
 import org.drools.drl8.ast.MethodNode;
 import org.drools.drl8.ast.Node;
@@ -41,6 +42,7 @@ import org.drools.drl8.ast.statements.ExpressionStatementNode;
 import org.drools.drl8.ast.statements.StatementNode;
 import org.drools.drl8.ast.statements.VariableDeclarationNode;
 import org.drools.drl8.ast.statements.VariableDeclarationStatementNode;
+import org.drools.drl8.util.DebugStack;
 import org.drools.drl8.util.VariablesScope;
 
 import java.util.ArrayList;
@@ -51,8 +53,11 @@ import static java.util.stream.Collectors.toList;
 import static org.drools.drl8.util.ASTUtil.parseTreeToString;
 
 public class ASTGenerator extends DRL8BaseListener {
+
+    private static final boolean DEBUG = false;
+
     private final SourceNode source = new SourceNode();
-    private final Stack<Node> stack = new Stack<>();
+    private final Stack<Node> stack = DEBUG ? new DebugStack<>() : new Stack<>();
     private VariablesScope scope = new VariablesScope();
 
     public ASTGenerator() {
@@ -93,6 +98,27 @@ public class ASTGenerator extends DRL8BaseListener {
                                  .map( Object::toString )
                                  .collect( toList() );
         classNode.name = ctx.Identifier().toString();
+    }
+
+    @Override
+    public void enterFieldDeclaration( DRL8Parser.FieldDeclarationContext ctx ) {
+        FieldNode fieldNode = new FieldNode();
+        ClassNode classNode = (ClassNode) stack.peek();
+        if (classNode.fields ==  null) {
+            classNode.fields = new ArrayList<>();
+        }
+        classNode.fields.add( fieldNode );
+        fieldNode.parent = classNode;
+        stack.push( fieldNode );
+    }
+
+    @Override
+    public void exitFieldDeclaration( DRL8Parser.FieldDeclarationContext ctx ) {
+        FieldNode fieldNode = (FieldNode) stack.pop();
+        fieldNode.modifiers = ctx.fieldModifier().stream()
+                                 .flatMap( mod -> IntStream.range( 0, mod.getChildCount() ).mapToObj( i -> mod.getChild( i ) ) )
+                                 .map( Object::toString )
+                                 .collect( toList() );
     }
 
     @Override
@@ -163,6 +189,13 @@ public class ASTGenerator extends DRL8BaseListener {
     }
 
     @Override
+    public void exitFormalParameter( DRL8Parser.FormalParameterContext ctx ) {
+        ParamNode paramNode = (ParamNode) stack.pop();
+        paramNode.name = ctx.variableDeclaratorId().Identifier().toString();
+        scope.define( paramNode.name, paramNode.type );
+    }
+
+    @Override
     public void enterUnannType( DRL8Parser.UnannTypeContext ctx ) {
         TypedNode parent = (TypedNode) stack.peek();
         ParamTypeNode paramTypeNode = new ParamTypeNode();
@@ -174,12 +207,6 @@ public class ASTGenerator extends DRL8BaseListener {
     @Override
     public void exitUnannType( DRL8Parser.UnannTypeContext ctx ) {
         stack.pop();
-    }
-
-    @Override
-    public void exitFormalParameter( DRL8Parser.FormalParameterContext ctx ) {
-        ParamNode paramNode = (ParamNode) stack.pop();
-        paramNode.name = ctx.variableDeclaratorId().Identifier().toString();
     }
 
     @Override
@@ -270,7 +297,7 @@ public class ASTGenerator extends DRL8BaseListener {
             if (child.toString().equals( "(" )) {
                 break;
             }
-            if (child instanceof TerminalNode) {
+            if (child instanceof TerminalNode ) {
                 sb.append( child );
             } else {
                 sb.append( parseTreeToString( child ) );
@@ -288,21 +315,26 @@ public class ASTGenerator extends DRL8BaseListener {
 
     @Override
     public void enterVariableDeclarator( DRL8Parser.VariableDeclaratorContext ctx ) {
-        VariableDeclarationStatementNode statementNode = (VariableDeclarationStatementNode) stack.peek();
         VariableDeclarationNode declarationNode = new VariableDeclarationNode();
-        declarationNode.parent = statementNode;
-        if (statementNode.declarations == null) {
-            statementNode.declarations = new ArrayList<>();
+        Node node = stack.peek();
+        if (node instanceof VariableDeclarationStatementNode) {
+            VariableDeclarationStatementNode statementNode = (VariableDeclarationStatementNode) node;
+            if ( statementNode.declarations == null ) {
+                statementNode.declarations = new ArrayList<>();
+            }
+            statementNode.declarations.add( declarationNode );
+        } else if (node instanceof FieldNode) {
+            ( (FieldNode) node ).declaration = declarationNode;
         }
-        statementNode.declarations.add(declarationNode);
-        stack.push(declarationNode);
+        declarationNode.parent = node;
+        stack.push( declarationNode );
     }
 
     @Override
     public void exitVariableDeclarator( DRL8Parser.VariableDeclaratorContext ctx ) {
         VariableDeclarationNode declarationNode = (VariableDeclarationNode) stack.pop();
         declarationNode.id = ctx.variableDeclaratorId().Identifier().toString();
-        scope.define( declarationNode.id, ( (VariableDeclarationStatementNode) declarationNode.parent ).type );
+        scope.define( declarationNode.id, ( (TypedNode) declarationNode.parent ).getType() );
     }
 
     @Override
@@ -328,7 +360,7 @@ public class ASTGenerator extends DRL8BaseListener {
                 VariableDeclarationNode declarationNode = (VariableDeclarationNode) node;
                 declarationNode.expression = expressionNode.left;
                 expressionNode.left.parent = declarationNode;
-            } else if (node instanceof MethodInvocationExpressionNode) {
+            } else if (node instanceof MethodInvocationExpressionNode ) {
                 MethodInvocationExpressionNode invocationNode = (MethodInvocationExpressionNode) node;
                 if (invocationNode.arguments == null) {
                     invocationNode.arguments = new ArrayList<>();
@@ -377,3 +409,6 @@ public class ASTGenerator extends DRL8BaseListener {
         }
     }
 }
+
+
+

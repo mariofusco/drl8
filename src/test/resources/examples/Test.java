@@ -1,10 +1,24 @@
 package org.test;
 
 public class Test {
-    public static void main(String arg) {
-        Integer a = 1000;
-        Integer b = 1000;
-        boolean equals = a == b;
+    private static Integer field = 1000;
+
+    public static void eval() {
+        Integer val1 = 1000;
+        Integer val2 = 1000;
+        boolean equals = val1 == val2;
+        System.out.println(equals);
+    }
+
+    public static void evalWithField() {
+        Integer val = 1000;
+        boolean equals = field == val;
+        System.out.println(equals);
+    }
+
+    public static void evalWithArg(Integer arg) {
+        Integer val = 1000;
+        boolean equals = arg == val;
         System.out.println(equals);
     }
 }

@@ -20,5 +20,4 @@ import java.util.List;
 
 public abstract class MemberNode extends AbstractNode {
     public List<String> modifiers;
-    public String name;
 }

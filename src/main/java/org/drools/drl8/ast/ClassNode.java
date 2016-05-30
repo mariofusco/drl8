@@ -44,7 +44,9 @@ public class ClassNode extends TypeNode {
         }
         sb.append( "{\n" );
         appendList( ctx, sb, fields, "\n" );
+        sb.append( "\n" );
         appendList( ctx, sb, methods, "\n" );
+        sb.append( "\n" );
         appendList( ctx, sb, innerTypes, "\n" );
         sb.append( "}" );
     }

@@ -28,7 +28,13 @@ public class ParamNode extends AbstractNode implements TypedNode {
         sb.append( " " ).append( name );
     }
 
+    @Override
     public void setType( ParamTypeNode type ) {
         this.type = type;
+    }
+
+    @Override
+    public ParamTypeNode getType() {
+        return type;
     }
 }

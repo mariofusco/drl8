@@ -26,7 +26,7 @@ public abstract class AbstractNode implements Node {
     protected void appendList( CodeGenerationContext ctx, StringBuilder sb, List<? extends Node> list, String separator ) {
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
-                if (i > 0) {
+                if (i > 0 || separator.equals( "\n" )) {
                     sb.append( separator );
                 }
                 list.get(i).generateCode( ctx, sb );

@@ -38,4 +38,9 @@ public class VariableDeclarationStatementNode extends StatementNode implements T
     public void setType( ParamTypeNode type ) {
         this.type = type;
     }
+
+    @Override
+    public ParamTypeNode getType() {
+        return type;
+    }
 }

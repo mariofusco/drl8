@@ -57,8 +57,15 @@ public class Main {
 
         NativeJavaCompiler compiler = new NativeJavaCompiler( Main.class.getClassLoader() );
         Class<?> clazz = compiler.compile( sourceNode.getFullyQualifiedName(), code );
-        Method m = clazz.getMethod( "main", String.class );
-        m.invoke( null, "test" );
+
+        Method m1 = clazz.getMethod( "eval" );
+        m1.invoke( null );
+
+        Method m2 = clazz.getMethod( "evalWithField" );
+        m2.invoke( null );
+
+        Method m3 = clazz.getMethod( "evalWithArg", Integer.class );
+        m3.invoke( null, 1000 );
     }
 
 }

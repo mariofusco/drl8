@@ -14,9 +14,29 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.util;
 
-public interface TypedNode extends Node {
-    ParamTypeNode getType();
-    void setType( ParamTypeNode type );
+import java.util.Stack;
+
+public class DebugStack<T> extends Stack<T> {
+
+    @Override
+    public T push( T item ) {
+        System.out.println("PUSH: " + item.getClass());
+        return super.push( item );
+    }
+
+    @Override
+    public synchronized T pop() {
+        T item = super.pop();
+        System.out.println("POP: " + item.getClass());
+        return item;
+    }
+
+    @Override
+    public synchronized T peek() {
+        T item = super.peek();
+        System.out.println("PEEK: " + item.getClass());
+        return item;
+    }
 }

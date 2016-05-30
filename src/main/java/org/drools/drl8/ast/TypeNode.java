@@ -20,4 +20,5 @@ import java.util.List;
 
 public abstract class TypeNode extends MemberNode implements Node {
     public List<TypeNode> innerTypes;
+    public String name;
 }

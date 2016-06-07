@@ -16,25 +16,8 @@
 
 package org.drools.drl8.ast;
 
-import org.drools.drl8.util.CodeGenerationContext;
+import org.drools.drl8.ast.expressions.ExpressionNode;
 
-public interface Node {
-    void setParent( Node parent );
-
-    void generateCode( CodeGenerationContext ctx, StringBuilder sb );
-
-    Node DUMMY = new Dummy();
-
-    class Dummy implements Node {
-
-        @Override
-        public void setParent( Node parent ) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-            throw new UnsupportedOperationException();
-        }
-    }
+public interface ExpressionContainerNode extends Node {
+    void setExpression(ExpressionNode expression);
 }

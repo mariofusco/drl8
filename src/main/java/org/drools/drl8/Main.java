@@ -66,6 +66,9 @@ public class Main {
 
         Method m3 = clazz.getMethod( "evalWithArg", Integer.class );
         m3.invoke( null, 1000 );
+
+        Method m4 = clazz.getMethod( "evalWithMethodInvocation" );
+        m4.invoke( null );
     }
 
 }

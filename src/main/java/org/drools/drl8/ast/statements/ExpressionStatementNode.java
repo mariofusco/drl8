@@ -16,15 +16,21 @@
 
 package org.drools.drl8.ast.statements;
 
+import org.drools.drl8.ast.ExpressionContainerNode;
 import org.drools.drl8.ast.expressions.ExpressionNode;
 import org.drools.drl8.util.CodeGenerationContext;
 
-public class ExpressionStatementNode extends StatementNode {
+public class ExpressionStatementNode extends StatementNode implements ExpressionContainerNode {
     public ExpressionNode expression;
 
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         expression.generateCode( ctx, sb );
         sb.append( ";" );
+    }
+
+    @Override
+    public void setExpression( ExpressionNode expression ) {
+        this.expression = expression;
     }
 }

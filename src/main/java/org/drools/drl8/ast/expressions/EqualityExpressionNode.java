@@ -16,10 +16,11 @@
 
 package org.drools.drl8.ast.expressions;
 
+import org.drools.drl8.ast.ExpressionContainerNode;
 import org.drools.drl8.ast.ParamTypeNode;
 import org.drools.drl8.util.CodeGenerationContext;
 
-public class EqualityExpressionNode extends ExpressionNode {
+public class EqualityExpressionNode extends ExpressionNode implements ExpressionContainerNode {
     public ExpressionNode left;
     public ExpressionNode right;
     public boolean negated;
@@ -40,5 +41,14 @@ public class EqualityExpressionNode extends ExpressionNode {
     @Override
     public ParamTypeNode getType() {
         return left.getType();
+    }
+
+    @Override
+    public void setExpression( ExpressionNode expression ) {
+        if (left == null) {
+            left = expression;
+        } else {
+            right = expression;
+        }
     }
 }

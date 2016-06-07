@@ -16,11 +16,13 @@
 
 package org.drools.drl8;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.drools.drl8.antlr4.DRL8BaseListener;
 import org.drools.drl8.antlr4.DRL8Parser;
 import org.drools.drl8.ast.ClassNode;
+import org.drools.drl8.ast.ExpressionContainerNode;
 import org.drools.drl8.ast.FieldNode;
 import org.drools.drl8.ast.MethodBodyNode;
 import org.drools.drl8.ast.MethodNode;
@@ -39,6 +41,7 @@ import org.drools.drl8.ast.expressions.MethodInvocationExpressionNode;
 import org.drools.drl8.ast.expressions.StringLiteralNode;
 import org.drools.drl8.ast.expressions.VariableNameNode;
 import org.drools.drl8.ast.statements.ExpressionStatementNode;
+import org.drools.drl8.ast.statements.ReturnStatementNode;
 import org.drools.drl8.ast.statements.StatementNode;
 import org.drools.drl8.ast.statements.VariableDeclarationNode;
 import org.drools.drl8.ast.statements.VariableDeclarationStatementNode;
@@ -46,6 +49,8 @@ import org.drools.drl8.util.DebugStack;
 import org.drools.drl8.util.VariablesScope;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 import java.util.stream.IntStream;
 
@@ -59,6 +64,7 @@ public class ASTGenerator extends DRL8BaseListener {
     private final SourceNode source = new SourceNode();
     private final Stack<Node> stack = DEBUG ? new DebugStack<>() : new Stack<>();
     private VariablesScope scope = new VariablesScope();
+    private Set<String> notAllowedStackPop = new HashSet<>();
 
     public ASTGenerator() {
         stack.push( source );
@@ -197,16 +203,23 @@ public class ASTGenerator extends DRL8BaseListener {
 
     @Override
     public void enterUnannType( DRL8Parser.UnannTypeContext ctx ) {
-        TypedNode parent = (TypedNode) stack.peek();
+        Node node = stack.peek();
+        if (node instanceof ParamTypeNode) {
+            notAllowedStackPop.add("UnannType");
+            return;
+        }
+        TypedNode typedNode = (TypedNode) node;
         ParamTypeNode paramTypeNode = new ParamTypeNode();
-        parent.setType( paramTypeNode );
-        paramTypeNode.parent = parent;
+        typedNode.setType( paramTypeNode );
+        paramTypeNode.parent = typedNode;
         stack.push( paramTypeNode );
     }
 
     @Override
     public void exitUnannType( DRL8Parser.UnannTypeContext ctx ) {
-        stack.pop();
+        if (!notAllowedStackPop.remove("UnannType")) {
+            stack.pop();
+        }
     }
 
     @Override
@@ -266,6 +279,13 @@ public class ASTGenerator extends DRL8BaseListener {
     }
 
     @Override
+    public void enterReturnStatement( DRL8Parser.ReturnStatementContext ctx ) {
+        ReturnStatementNode returnNode = new ReturnStatementNode();
+        returnNode.parent = stack.peek();
+        stack.push( returnNode );
+    }
+
+    @Override
     public void enterExpressionStatement( DRL8Parser.ExpressionStatementContext ctx ) {
         ExpressionStatementNode expression = new ExpressionStatementNode();
         expression.parent = stack.peek();
@@ -281,15 +301,29 @@ public class ASTGenerator extends DRL8BaseListener {
 
     @Override
     public void enterMethodInvocation( DRL8Parser.MethodInvocationContext ctx ) {
-        ExpressionStatementNode expression = (ExpressionStatementNode) stack.peek();
+        ExpressionContainerNode expression = (ExpressionContainerNode) stack.peek();
         MethodInvocationExpressionNode invocation = new MethodInvocationExpressionNode();
         invocation.parent = expression;
-        expression.expression = invocation;
+        expression.setExpression( invocation );
         stack.push( invocation );
     }
 
     @Override
+    public void enterMethodInvocation_lfno_primary( DRL8Parser.MethodInvocation_lfno_primaryContext ctx ) {
+        enterMethodInvocation( null );
+    }
+
+    @Override
     public void exitMethodInvocation( DRL8Parser.MethodInvocationContext ctx ) {
+        parseMethodInvocation( ctx );
+    }
+
+    @Override
+    public void exitMethodInvocation_lfno_primary( DRL8Parser.MethodInvocation_lfno_primaryContext ctx ) {
+        parseMethodInvocation( ctx );
+    }
+
+    private void parseMethodInvocation( ParserRuleContext ctx ) {
         MethodInvocationExpressionNode invocation = (MethodInvocationExpressionNode) stack.pop();
 
         StringBuilder sb = new StringBuilder();
@@ -367,6 +401,8 @@ public class ASTGenerator extends DRL8BaseListener {
                 }
                 invocationNode.arguments.add(expressionNode.left);
                 expressionNode.left.parent = invocationNode;
+            } else if (node instanceof ReturnStatementNode ) {
+                ( (ReturnStatementNode) node ).result = expressionNode.left;
             } else {
                 throw new RuntimeException( "unknown type " + node.getClass() );
             }

@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package org.drools.drl8.ast;
+package org.drools.drl8.ast.statements;
 
+import org.drools.drl8.ast.expressions.ExpressionNode;
 import org.drools.drl8.util.CodeGenerationContext;
 
-public interface Node {
-    void setParent( Node parent );
+public class ReturnStatementNode extends StatementNode {
 
-    void generateCode( CodeGenerationContext ctx, StringBuilder sb );
+    public ExpressionNode result;
 
-    Node DUMMY = new Dummy();
-
-    class Dummy implements Node {
-
-        @Override
-        public void setParent( Node parent ) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-            throw new UnsupportedOperationException();
-        }
+    @Override
+    public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
+        sb.append( "return " );
+        result.generateCode( ctx, sb );
+        sb.append( ";" );
     }
 }

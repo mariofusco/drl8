@@ -27,7 +27,6 @@ public class ClassNode extends TypeNode {
     public String extend;
     public List<String> interfaces;
     public List<FieldNode> fields;
-    public List<MethodNode> methods;
 
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {

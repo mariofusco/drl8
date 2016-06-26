@@ -56,7 +56,7 @@ public class Main {
         System.out.println( );
 
         NativeJavaCompiler compiler = new NativeJavaCompiler( Main.class.getClassLoader() );
-        Class<?> clazz = compiler.compile( sourceNode.getFullyQualifiedName(), code );
+        Class<?> clazz = compiler.compile( sourceNode.type.getFullyQualifiedName(), code );
 
         Method m1 = clazz.getMethod( "eval" );
         m1.invoke( null );

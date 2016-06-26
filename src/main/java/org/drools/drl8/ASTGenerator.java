@@ -341,6 +341,7 @@ public class ASTGenerator extends DRL8BaseListener {
         int dotPos = invoked.lastIndexOf( '.' );
         if (dotPos > 0) {
             invocation.invokedObject = invoked.substring( 0, dotPos );
+            invocation.invokedType = scope.lookup( invocation.invokedObject );
             invocation.methodName = invoked.substring( dotPos+1 );
         } else {
             invocation.methodName = invoked;

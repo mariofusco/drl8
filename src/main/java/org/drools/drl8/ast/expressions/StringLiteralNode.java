@@ -17,6 +17,7 @@
 package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 public class StringLiteralNode extends LiteralNode<String> {
 
@@ -27,7 +28,7 @@ public class StringLiteralNode extends LiteralNode<String> {
     }
 
     @Override
-    public ParamTypeNode getType() {
+    public ParamTypeNode getType(CodeGenerationContext ctx ) {
         return TYPE;
     }
 }

@@ -17,16 +17,42 @@
 package org.drools.drl8.util;
 
 import org.drools.drl8.ast.Node;
+import org.drools.drl8.ast.SourceNode;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CodeGenerationContext {
 
+    private final ClassResolver classResolver = new ClassResolver();
+
     private boolean equalityMode = false;
 
-    public String generateCode(Node node ) {
+    public String generateCode( Node node ) {
+        if (node instanceof SourceNode) {
+            classResolver.indexSource( ( (SourceNode) node ) );
+        }
+        return codeOf( node );
+    }
+
+    private String codeOf( Node node ) {
         StringBuilder sb = new StringBuilder();
         node.generateCode( this, sb );
         return sb.toString();
     }
+
+    public Map<String, String> generateCode( Iterable<SourceNode> sources ) {
+        for (SourceNode source : sources) {
+            classResolver.indexSource( source );
+        }
+        Map<String, String> result = new HashMap<>();
+        for (SourceNode source : sources) {
+            result.put( source.type.getFullyQualifiedName(), codeOf( source ) );
+        }
+        return result;
+    }
+
 
     public boolean isEqualityMode() {
         return equalityMode;
@@ -35,5 +61,9 @@ public class CodeGenerationContext {
     public CodeGenerationContext setEqualityMode( boolean equalityMode ) {
         this.equalityMode = equalityMode;
         return this;
+    }
+
+    public ClassDescriptor resolve( String name, List<String> imports ) {
+        return classResolver.resolve( name, imports );
     }
 }

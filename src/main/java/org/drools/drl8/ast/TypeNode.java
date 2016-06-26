@@ -21,4 +21,12 @@ import java.util.List;
 public abstract class TypeNode extends MemberNode implements Node {
     public List<TypeNode> innerTypes;
     public String name;
+    public List<MethodNode> methods;
+
+    public String getFullyQualifiedName() {
+        String parentName = parent instanceof SourceNode ?
+                            ( (SourceNode) parent ).pkg :
+                            ( (TypeNode) parent ).name;
+        return (parentName != null ? parentName + "." : "") + name;
+    }
 }

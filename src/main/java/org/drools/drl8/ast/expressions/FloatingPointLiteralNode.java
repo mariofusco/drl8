@@ -17,6 +17,7 @@
 package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 public class FloatingPointLiteralNode extends LiteralNode<Double> {
 
@@ -31,7 +32,7 @@ public class FloatingPointLiteralNode extends LiteralNode<Double> {
     }
 
     @Override
-    public ParamTypeNode getType() {
+    public ParamTypeNode getType(CodeGenerationContext ctx ) {
         return TYPE;
     }
 }

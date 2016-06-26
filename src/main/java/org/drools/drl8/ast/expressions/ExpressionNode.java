@@ -18,7 +18,8 @@ package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.AbstractNode;
 import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.util.CodeGenerationContext;
 
 public abstract class ExpressionNode extends AbstractNode {
-    public abstract ParamTypeNode getType();
+    public abstract ParamTypeNode getType(CodeGenerationContext ctx );
 }

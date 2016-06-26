@@ -28,7 +28,7 @@ public class VariableNameNode extends ExpressionNode {
         sb.append( id );
     }
 
-    public ParamTypeNode getType() {
+    public ParamTypeNode getType(CodeGenerationContext ctx) {
         return type;
     }
 }

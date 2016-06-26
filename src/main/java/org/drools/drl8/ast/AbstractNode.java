@@ -44,4 +44,8 @@ public abstract class AbstractNode implements Node {
         generateCode( null, sb );
         return sb.toString();
     }
+
+    public <T extends Node> T getParentOfType(Class<T> nodeType) {
+        return nodeType.isInstance( parent ) ? (T)parent : (T)parent.getParentOfType( nodeType );
+    }
 }

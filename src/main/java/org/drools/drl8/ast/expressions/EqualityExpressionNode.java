@@ -28,7 +28,7 @@ public class EqualityExpressionNode extends ExpressionNode implements Expression
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
         left.generateCode( ctx, sb );
-        if (ctx.isEqualityMode() && !left.getType().isPrimitive) {
+        if (ctx.isEqualityMode() && !left.getType(ctx).isPrimitive) {
             sb.append( ".equals(" );
             right.generateCode( ctx, sb );
             sb.append( ")" );
@@ -39,8 +39,8 @@ public class EqualityExpressionNode extends ExpressionNode implements Expression
     }
 
     @Override
-    public ParamTypeNode getType() {
-        return left.getType();
+    public ParamTypeNode getType(CodeGenerationContext ctx) {
+        return left.getType(ctx);
     }
 
     @Override

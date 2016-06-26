@@ -23,18 +23,5 @@ public interface Node {
 
     void generateCode( CodeGenerationContext ctx, StringBuilder sb );
 
-    Node DUMMY = new Dummy();
-
-    class Dummy implements Node {
-
-        @Override
-        public void setParent( Node parent ) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-            throw new UnsupportedOperationException();
-        }
-    }
+    <T extends Node> T getParentOfType(Class<T> nodeType);
 }

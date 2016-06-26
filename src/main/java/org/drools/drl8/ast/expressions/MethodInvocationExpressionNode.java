@@ -17,11 +17,15 @@
 package org.drools.drl8.ast.expressions;
 
 import org.drools.drl8.ast.ParamTypeNode;
+import org.drools.drl8.ast.SourceNode;
+import org.drools.drl8.ast.TypeNode;
+import org.drools.drl8.util.ClassDescriptor;
 import org.drools.drl8.util.CodeGenerationContext;
 
 import java.util.List;
 
 public class MethodInvocationExpressionNode extends ExpressionNode {
+    public ParamTypeNode invokedType;
     public String invokedObject;
     public String methodName;
     public List<ExpressionNode> arguments;
@@ -38,7 +42,16 @@ public class MethodInvocationExpressionNode extends ExpressionNode {
     }
 
     @Override
-    public ParamTypeNode getType() {
-        return ParamTypeNode.UNKNOWN_TYPE;
+    public ParamTypeNode getType(CodeGenerationContext ctx) {
+        ClassDescriptor classDescriptor = ctx.resolve( getInvokedType().rawType, getParentOfType( SourceNode.class ).imports );
+        return classDescriptor.getMethodReturnType( methodName );
+    }
+
+    public ParamTypeNode getInvokedType() {
+        if (invokedType == null) {
+            TypeNode typeNode = getParentOfType( TypeNode.class );
+            invokedType = new ParamTypeNode( typeNode.getFullyQualifiedName() );
+        }
+        return invokedType;
     }
 }

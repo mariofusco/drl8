@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
 import static org.drools.drl8.util.IOUtils.readFileAsString;
@@ -66,14 +65,14 @@ public class JDTMain {
         @Override
         public boolean visit( InfixExpression node ) {
             if ( node.getOperator() == InfixExpression.Operator.EQUALS) {
-                MethodInvocation equalsInvocation = createNode( MethodInvocation.class, node.getAST() );
+                MethodInvocation equalsInvocation = (MethodInvocation) node.getAST().createInstance( MethodInvocation.class );
 
                 Expression left = node.getLeftOperand();
                 equalsInvocation.setExpression( resetParent(node.getLeftOperand()) );
 
                 equalsInvocation.arguments().add( 0, resetParent(node.getRightOperand()) );
 
-                SimpleName equalsName = createNode( SimpleName.class, node.getAST());
+                SimpleName equalsName = (SimpleName) node.getAST().createInstance( SimpleName.class );
                 equalsName.setIdentifier( "equals" );
                 equalsInvocation.setName( equalsName );
 
@@ -90,16 +89,6 @@ public class JDTMain {
 
         public CompilationUnit getCompilationUnit() {
             return compilationUnit;
-        }
-    }
-
-    private static <T extends ASTNode> T createNode(Class<T> nodeClass, AST ast) {
-        try {
-            Constructor<?> c = nodeClass.getDeclaredConstructor( AST.class );
-            c.setAccessible( true );
-            return (T) c.newInstance( ast );
-        } catch (Exception e) {
-            throw new RuntimeException( e );
         }
     }
 

@@ -57,7 +57,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 import static org.drools.drl8.util.ASTUtil.parseTreeToString;
 
-public class ASTGenerator extends DRL8BaseListener {
+public class ASTGeneratorListener extends DRL8BaseListener {
 
     private static final boolean DEBUG = false;
 
@@ -66,7 +66,7 @@ public class ASTGenerator extends DRL8BaseListener {
     private VariablesScope scope = new VariablesScope();
     private Set<String> notAllowedStackPop = new HashSet<>();
 
-    public ASTGenerator() {
+    public ASTGeneratorListener() {
         stack.push( source );
     }
 

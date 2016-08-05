@@ -25,8 +25,11 @@ public class ReturnStatementNode extends StatementNode {
 
     @Override
     public void generateCode( CodeGenerationContext ctx, StringBuilder sb ) {
-        sb.append( "return " );
-        result.generateCode( ctx, sb );
+        sb.append( "return" );
+        if (result != null) {
+            sb.append( " " );
+            result.generateCode( ctx, sb );
+        }
         sb.append( ";" );
     }
 }

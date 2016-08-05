@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.drools.drl8.antlr4.DRL8Lexer;
 import org.drools.drl8.antlr4.DRL8Parser;
 import org.drools.drl8.ast.SourceNode;
@@ -27,6 +28,7 @@ import org.drools.drl8.compiler.NativeJavaCompiler;
 import org.drools.drl8.util.CodeGenerationContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class Main {
@@ -34,21 +36,9 @@ public class Main {
     private static final String TEST_FILE = "src/test/resources/examples/Test.java";
 
     public static void main( String[] args ) throws Exception {
-        File file = new File( TEST_FILE);
-
-        ANTLRFileStream antlrFileStream = new ANTLRFileStream( file.getAbsolutePath(), "UTF-8");
-        DRL8Lexer lexer = new DRL8Lexer( antlrFileStream );
-        final CommonTokenStream tokens = new CommonTokenStream( lexer );
-
-        DRL8Parser parser = new DRL8Parser( tokens );
-        parser.setErrorHandler(new BailErrorStrategy() );
-
-        ASTGenerator sourceGenerator = new ASTGenerator();
-        parser.addParseListener( sourceGenerator );
-        ParserRuleContext parserRuleContext = parser.compilationUnit();
+        SourceNode sourceNode = getSourceNode(false);
 
         CodeGenerationContext ctx = new CodeGenerationContext();
-        SourceNode sourceNode = sourceGenerator.getSource();
         String code = ctx
                 .setEqualityMode( true )
                 .generateCode( sourceNode );
@@ -69,6 +59,37 @@ public class Main {
 
         Method m4 = clazz.getMethod( "evalWithMethodInvocation" );
         m4.invoke( null );
+    }
+
+    private static SourceNode getSourceNode(boolean useListener) throws IOException {
+        return useListener ? getSourceNodeUsingListener() : getSourceNodeUsingVisitor();
+    }
+
+    private static SourceNode getSourceNodeUsingListener() throws IOException {
+        DRL8Parser parser = getDrl8Parser();
+        ASTGeneratorListener sourceGenerator = new ASTGeneratorListener();
+        parser.addParseListener( sourceGenerator );
+        ParserRuleContext parserRuleContext = parser.compilationUnit();
+        return sourceGenerator.getSource();
+    }
+
+    private static SourceNode getSourceNodeUsingVisitor() throws IOException {
+        DRL8Parser parser = getDrl8Parser();
+        ParseTree tree = parser.compilationUnit();
+        ASTGeneratorVisitor v = new ASTGeneratorVisitor();
+        return ( SourceNode ) v.visit( tree );
+    }
+
+    private static DRL8Parser getDrl8Parser() throws IOException {
+        File file = new File( TEST_FILE);
+
+        ANTLRFileStream antlrFileStream = new ANTLRFileStream( file.getAbsolutePath(), "UTF-8");
+        DRL8Lexer lexer = new DRL8Lexer( antlrFileStream );
+        final CommonTokenStream tokens = new CommonTokenStream( lexer );
+
+        DRL8Parser parser = new DRL8Parser( tokens );
+        parser.setErrorHandler(new BailErrorStrategy() );
+        return parser;
     }
 
 }

@@ -19,7 +19,18 @@ package org.drools.drl8.util;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ASTUtil {
+
+    public static <T> List<T> addToList( List<T> list, Object item ) {
+        if (list == null) {
+            list = new ArrayList<T>();
+        }
+        list.add( (T) item );
+        return list;
+    }
 
     public static String parseTreeToString( ParseTree tree ) {
         StringBuilder sb = new StringBuilder();

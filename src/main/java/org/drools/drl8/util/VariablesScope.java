@@ -16,6 +16,7 @@
 
 package org.drools.drl8.util;
 
+import org.drools.drl8.ast.ParamNode;
 import org.drools.drl8.ast.ParamTypeNode;
 
 import java.util.HashMap;
@@ -39,6 +40,10 @@ public class VariablesScope {
             return type;
         }
         return parent != null ? parent.lookup( name ) : null;
+    }
+
+    public void define(ParamNode param) {
+        variables.put( param.name, param.type );
     }
 
     public void define(String name, ParamTypeNode type) {
